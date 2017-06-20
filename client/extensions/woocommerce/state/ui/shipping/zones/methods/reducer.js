@@ -51,6 +51,8 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	}
 	return { ...state,
 		creates: [ ...state.creates, method ],
+		currentlyEditingId: id,
+		currentlyEditingChanges: { isNew: true },
 	};
 };
 
@@ -82,6 +84,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 
 	const { changedType } = currentlyEditingChanges;
 	const bucket = getBucket( { id: currentlyEditingId } );
+	currentlyEditingChanges.isNew = false;
 
 	//if method type has been changed, then remove the old one and a new method in its place
 	if ( changedType ) {
@@ -154,6 +157,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		...builtInShippingMethods[ methodType ]( undefined, action ),
 		id: state.currentlyEditingId,
 		title: getMethodName( methodType ),
+		isNew: state.currentlyEditingChanges.isNew,
 		changedType: true,
 		methodType
 	};
