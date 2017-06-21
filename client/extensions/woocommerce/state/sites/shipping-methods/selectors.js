@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { find, get, isArray } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -51,4 +52,22 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
 		}
 	}
 	return { id, title: id, description: '' };
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @returns {Function} utility function taking method type as an argument and returning a matched type
+ */
+export const getShippingMethodNameMap = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areShippingMethodsLoaded( state, siteId ) ) {
+		return () => ( translate( 'Unknown shipping method' ) );
+	}
+
+	const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
+		result[ id ] = title;
+		return result;
+	}, {} );
+
+	return ( id ) => ( map[ id ] || translate( 'Unknown shipping method' ) );
 };

@@ -22,7 +22,6 @@ import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
 import localPickup from './local-pickup/reducer';
-import { getMethodName } from './utils';
 
 export const builtInShippingMethods = {
 	flat_rate: flatRate,
@@ -42,14 +41,14 @@ export const initialState = {
 const reducer = {};
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
-	const methodType = action.methodType;
+	const { methodType, title } = action;
 	const id = nextBucketIndex( state.creates );
 	let method = { id, methodType, enabled: true };
 	if ( builtInShippingMethods[ methodType ] ) {
 		method = {
 			...method,
 			...builtInShippingMethods[ methodType ]( undefined, action ),
-			title: getMethodName( methodType ),
+			title,
 		};
 	}
 	return { ...state,
@@ -161,7 +160,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ] = ( state, { methodId } ) => 
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
-	const { methodType } = action;
+	const { methodType, title } = action;
 	if ( ! builtInShippingMethods[ methodType ] ) {
 		return state;
 	}
@@ -169,7 +168,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 	const currentlyEditingChanges = {
 		...builtInShippingMethods[ methodType ]( undefined, action ),
 		id: state.currentlyEditingId,
-		title: getMethodName( methodType ),
+		title,
 		methodType,
 	};
 

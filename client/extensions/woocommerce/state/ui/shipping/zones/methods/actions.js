@@ -17,10 +17,11 @@ import {
  * Adds a new shipping method to the shipping zone currently being edited.
  * @param {Number} siteId Site ID.
  * @param {String} methodType Type of shipping method to add. For example, "free_shipping", "local_pickup".
+ * @param {String} title Title of the new method.
  * @return {Object} Action object.
  */
-export const addMethodToShippingZone = ( siteId, methodType ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD, siteId, methodType };
+export const addMethodToShippingZone = ( siteId, methodType, title ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD, siteId, methodType, title };
 };
 
 /**
@@ -66,10 +67,11 @@ export const removeMethodFromShippingZone = ( siteId, methodId ) => {
  * shipping method from the shipping zone, and will create a new one of the given type.
  * @param {Number} siteId Site ID.
  * @param {String} methodType New shipping method type to switch to. For example, "free_shipping", "local_pickup".
+ * @param {String} title New method title.
  * @return {Object} Action object.
  */
-export const changeShippingZoneMethodType = ( siteId, methodType ) => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE, siteId, methodType };
+export const changeShippingZoneMethodType = ( siteId, methodType, title ) => {
+	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE, siteId, methodType, title };
 };
 
 /**
