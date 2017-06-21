@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, get, isArray } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -61,7 +60,7 @@ export const getShippingMethod = ( state, id, siteId = getSelectedSiteId( state 
  */
 export const getShippingMethodNameMap = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! areShippingMethodsLoaded( state, siteId ) ) {
-		return () => ( translate( 'Unknown shipping method' ) );
+		return ( typeId ) => ( typeId );
 	}
 
 	const map = getShippingMethods( state, siteId ).reduce( ( result, { id, title } ) => {
@@ -69,5 +68,5 @@ export const getShippingMethodNameMap = ( state, siteId = getSelectedSiteId( sta
 		return result;
 	}, {} );
 
-	return ( id ) => ( map[ id ] || translate( 'Unknown shipping method' ) );
+	return ( typeId ) => ( map[ typeId ] || typeId );
 };

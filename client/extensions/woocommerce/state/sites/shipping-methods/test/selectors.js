@@ -137,7 +137,7 @@ describe( 'selectors', () => {
 			};
 
 			const map = getShippingMethodNameMap( state, 123 );
-			expect( map( 'flat_rate' ) ).to.equal( 'Unknown shipping method' );
+			expect( map( 'flat_rate' ) ).to.equal( 'flat_rate' );
 		} );
 
 		it( 'should return map function', () => {
@@ -170,7 +170,7 @@ describe( 'selectors', () => {
 			expect( map( 'flat_rate' ) ).to.equal( 'Flat rate' );
 			expect( map( 'local_pickup' ) ).to.equal( 'Local pickup' );
 			expect( map( 'free_shipping' ) ).to.equal( 'Free shipping' );
-			expect( map( 'qwerty' ) ).to.equal( 'Unknown shipping method' );
+			expect( map( 'qwerty' ) ).to.equal( 'qwerty' );
 		} );
 	} );
 } );
