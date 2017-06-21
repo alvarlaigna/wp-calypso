@@ -11,6 +11,7 @@ import {
 	areShippingZonesLoaded,
 	areShippingZonesLoading,
 } from './selectors';
+import { fetchShippingMethods } from '../shipping-methods/actions';
 import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
 import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';
 
@@ -34,19 +35,22 @@ export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 
 	dispatch( getAction );
 
-	return request( siteId ).get( 'shipping/zones' )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} )
-		.then( ( data ) => {
-			if ( ! data ) {
-				return;
-			}
-			dispatch( fetchShippingZonesSuccess( siteId, data ) );
-			return Promise.all( data.map( zone => {
-				return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
-			} ).concat( data.map( zone => {
-				return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
-			} ) ) );
-		} );
+	return Promise.all( [
+		request( siteId ).get( 'shipping/zones' ),
+		fetchShippingMethods( siteId )( dispatch, getState ),
+	] )
+	.catch( err => {
+		dispatch( setError( siteId, getAction, err ) );
+	} )
+	.then( ( [ zoneData ] ) => {
+		if ( ! zoneData ) {
+			return;
+		}
+		dispatch( fetchShippingZonesSuccess( siteId, zoneData ) );
+		return Promise.all( zoneData.map( zone => {
+			return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
+		} ).concat( zoneData.map( zone => {
+			return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
+		} ) ) );
+	} );
 };
