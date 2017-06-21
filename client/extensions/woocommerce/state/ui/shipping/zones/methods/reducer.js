@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty, isEqual, isNil, reject } from 'lodash';
+import { find, findIndex, isEmpty, isEqual, isNil, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
+	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
 import { nextBucketIndex, getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
@@ -173,11 +174,41 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_EDIT_TITLE ] = ( state, { title } ) =>
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { enabled } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED ] = ( state, { enabled } ) => {
 	return { ...state,
 		currentlyEditingChanges: { ...state.currentlyEditingChanges,
 			enabled,
 		}
+	};
+};
+
+reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId, enabled } ) => {
+	const bucket = getBucket( { id: methodId } );
+	const index = findIndex( state[ bucket ], { id: methodId } );
+
+	if ( -1 === index ) {
+		return { ...state,
+			[ bucket ]: [
+				...state[ bucket ],
+				{
+					id: methodId,
+					enabled,
+				},
+			],
+		};
+	}
+
+	const methodState = { ...state[ bucket ][ index ],
+		enabled,
+	};
+
+	return {
+		...state,
+		[ bucket ]: [
+			...state[ bucket ].slice( 0, index ),
+			methodState,
+			...state[ bucket ].slice( index + 1 ),
+		],
 	};
 };
 

@@ -16,6 +16,7 @@ import {
 	changeShippingZoneMethodType,
 	changeShippingZoneMethodTitle,
 	toggleShippingZoneMethodEnabled,
+	toggleOpenedShippingZoneMethodEnabled,
 } from '../actions';
 import { setShippingCost } from '../flat-rate/actions';
 
@@ -366,7 +367,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'toggleShippingZoneMethodEnabled', () => {
+	describe( 'toggleOpenedShippingZoneMethodEnabled', () => {
 		it( 'should change the enabled state on the currently edited method', () => {
 			const state = {
 				creates: [],
@@ -376,8 +377,46 @@ describe( 'reducer', () => {
 				currentlyEditingChanges: { enabled: false },
 			};
 
-			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, true ) );
+			const newState = reducer( state, toggleOpenedShippingZoneMethodEnabled( siteId, true ) );
 			expect( newState.currentlyEditingChanges.enabled ).to.equal( true );
+		} );
+	} );
+
+	describe( 'toggleShippingZoneMethodEnabled', () => {
+		it( 'should change the entry on "updates" if the method has a server-side ID', () => {
+			const state = {
+				creates: [],
+				updates: [ { id: 1, enabled: true } ],
+				deletes: [],
+			};
+			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, 1, false ) );
+			expect( newState.creates ).to.be.empty;
+			expect( newState.deletes ).to.be.empty;
+			expect( newState.updates ).to.deep.equal( [ { id: 1, enabled: false } ] );
+		} );
+
+		it( 'should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
+			const state = {
+				creates: [],
+				updates: [],
+				deletes: [],
+			};
+			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, 1, true ) );
+			expect( newState.creates ).to.be.empty;
+			expect( newState.deletes ).to.be.empty;
+			expect( newState.updates ).to.deep.equal( [ { id: 1, enabled: true } ] );
+		} );
+
+		it( 'should change the entry in "creates" if the method has a provisional ID', () => {
+			const state = {
+				creates: [ { id: { index: 0 }, enabled: false } ],
+				updates: [],
+				deletes: [],
+			};
+			const newState = reducer( state, toggleShippingZoneMethodEnabled( siteId, { index: 0 }, true ) );
+			expect( newState.updates ).to.be.empty;
+			expect( newState.deletes ).to.be.empty;
+			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, enabled: true } ] );
 		} );
 	} );
 } );
