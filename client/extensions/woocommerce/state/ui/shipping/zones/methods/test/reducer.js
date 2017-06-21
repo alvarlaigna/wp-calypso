@@ -27,7 +27,8 @@ describe( 'reducer', () => {
 		it( 'should add the shipping method to the "creates" bucket and mark it as opened', () => {
 			const newState = reducer( initialState, addMethodToShippingZone( siteId, 'flat_rate' ) );
 			expect( newState.currentlyEditingId ).to.deep.equal( { index: 0 } );
-			expect( newState.currentlyEditingChanges ).to.deep.equal( { isNew: true } );
+			expect( newState.currentlyEditingChanges ).to.deep.equal( {} );
+			expect( newState.currentlyEditingNew ).to.equal( true );
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
 			expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
@@ -77,12 +78,13 @@ describe( 'reducer', () => {
 				deletes: [],
 				currentlyEditingId: 7,
 				currentlyEditingChanges: {},
+				currentlyEditingNew: false,
 			};
 
 			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate' ) );
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.changedType ).to.equal( true );
-			expect( newState.currentlyEditingChanges.isNew ).to.equal( undefined );
+			expect( newState.currentlyEditingNew ).to.equal( false );
 		} );
 
 		it( 'should change the type of a newly added method and keep it marked as new', () => {
@@ -91,13 +93,14 @@ describe( 'reducer', () => {
 				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
 				deletes: [],
 				currentlyEditingId: 7,
-				currentlyEditingChanges: { isNew: true },
+				currentlyEditingChanges: {},
+				currentlyEditingNew: true,
 			};
 
 			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate' ) );
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.changedType ).to.equal( true );
-			expect( newState.currentlyEditingChanges.isNew ).to.equal( true );
+			expect( newState.currentlyEditingNew ).to.equal( true );
 		} );
 	} );
 
@@ -194,15 +197,16 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 0 },
-				currentlyEditingChanges: { isNew: true, title: 'abc' },
+				currentlyEditingChanges: { title: 'abc' },
+				currentlyEditingNew: true,
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
 			expect( newState.currentlyEditingId ).to.equal( null );
+			expect( newState.currentlyEditingNew ).to.equal( false );
 			expect( newState.creates.length ).to.equal( 1 );
 			expect( newState.creates[ 0 ].id ).to.deep.equal( { index: 0 } );
 			expect( newState.creates[ 0 ].title ).to.equal( 'abc' );
-			expect( newState.creates[ 0 ].isNew ).to.equal( false );
 		} );
 
 		it( 'method type changed - should add the old method to "deletes" and add the new one to "creates" ' +
@@ -281,7 +285,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title', isNew: false } ] );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
 		it( 'title change - should add an entry on "updates" if the method has a server-side ID ' +
@@ -298,7 +302,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title', isNew: false } ] );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, title: 'New Title' } ] );
 		} );
 
 		it( 'title change - should change the entry in "creates" if the method has a provisional ID', () => {
@@ -314,7 +318,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 			expect( newState.updates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, title: 'New Title', isNew: false } ] );
+			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, title: 'New Title' } ] );
 		} );
 
 		it( 'property change - should change the entry on "updates" if the method has a server-side ID', () => {
@@ -330,7 +334,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 			expect( newState.creates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
-			expect( newState.updates ).to.deep.equal( [ { id: 1, cost: 42, isNew: false } ] );
+			expect( newState.updates ).to.deep.equal( [ { id: 1, cost: 42 } ] );
 		} );
 
 		it( 'property change - should add an entry on "updates" if the method has a server-side ID and it has not been edited', () => {
@@ -347,7 +351,7 @@ describe( 'reducer', () => {
 			expect( newState.creates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
 			expect( newState.updates.length ).to.equal( 1 );
-			expect( newState.updates[ 0 ] ).to.deep.include( { id: 1, cost: 42, isNew: false } );
+			expect( newState.updates[ 0 ] ).to.deep.include( { id: 1, cost: 42 } );
 		} );
 
 		it( 'property change - should change the entry in "creates" if the method has a provisional ID', () => {
@@ -363,7 +367,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingId ).to.equal( null );
 			expect( newState.updates ).to.be.empty;
 			expect( newState.deletes ).to.be.empty;
-			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, cost: 42, isNew: false } ] );
+			expect( newState.creates ).to.deep.equal( [ { id: { index: 0 }, cost: 42 } ] );
 		} );
 	} );
 

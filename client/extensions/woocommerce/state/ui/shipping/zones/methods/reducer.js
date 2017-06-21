@@ -35,6 +35,7 @@ export const initialState = {
 	updates: [],
 	deletes: [],
 	currentlyEditingId: null,
+	currentlyEditingNew: false,
 };
 
 const reducer = {};
@@ -53,7 +54,8 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	return { ...state,
 		creates: [ ...state.creates, method ],
 		currentlyEditingId: id,
-		currentlyEditingChanges: { isNew: true },
+		currentlyEditingNew: true,
+		currentlyEditingChanges: {},
 	};
 };
 
@@ -61,12 +63,14 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_OPEN ] = ( state, action ) => {
 	return { ...state,
 		currentlyEditingId: action.methodId,
 		currentlyEditingChanges: {},
+		currentlyEditingNew: false,
 	};
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL ] = ( state ) => {
 	return { ...state,
 		currentlyEditingId: null,
+		currentlyEditingNew: false,
 	};
 };
 
@@ -79,13 +83,13 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 	if ( isEmpty( currentlyEditingChanges ) ) {
 		// Nothing to save, no need to go through the rest of the algorithm
 		return { ...state,
+			currentlyEditingNew: false,
 			currentlyEditingId: null,
 		};
 	}
 
 	const { changedType } = currentlyEditingChanges;
 	const bucket = getBucket( { id: currentlyEditingId } );
-	currentlyEditingChanges.isNew = false;
 
 	//if method type has been changed, then remove the old one and a new method in its place
 	if ( changedType ) {
@@ -98,6 +102,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 		state = reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_REMOVE ]( state, { methodId: currentlyEditingId } );
 		return { ...state,
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 			creates: [
 				...state.creates,
 				{
@@ -129,6 +134,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE ] = ( state ) => {
 
 	return { ...state,
 		currentlyEditingId: null,
+		currentlyEditingNew: false,
 		[ bucket ]: newBucket,
 	};
 };
@@ -158,7 +164,6 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		...builtInShippingMethods[ methodType ]( undefined, action ),
 		id: state.currentlyEditingId,
 		title: getMethodName( methodType ),
-		isNew: state.currentlyEditingChanges.isNew,
 		changedType: true,
 		methodType
 	};

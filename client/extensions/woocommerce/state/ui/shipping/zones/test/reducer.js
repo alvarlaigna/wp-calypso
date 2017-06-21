@@ -23,6 +23,7 @@ const emptyMethodChanges = {
 	updates: [],
 	deletes: [],
 	currentlyEditingId: null,
+	currentlyEditingNew: false,
 };
 
 const emptyChanges = {

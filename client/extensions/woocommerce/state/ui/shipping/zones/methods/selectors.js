@@ -146,6 +146,24 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Boolean} Whether the opened method is new or not
+ */
+export const isCurrentlyOpenShippingZoneMethodNew = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areShippingZonesLoaded( state, siteId ) ) {
+		return false;
+	}
+
+	const zone = getCurrentlyEditingShippingZone( state, siteId );
+	if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
+		return false;
+	}
+
+	return zone.methods.currentlyEditingNew;
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {Number} [zoneId] Shipping Zone ID. If not provided, it will default to the shipping zone currently being edited
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} The list of Shipping Method types that can be added to the given shipping Zone

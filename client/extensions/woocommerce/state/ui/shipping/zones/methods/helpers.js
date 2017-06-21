@@ -25,12 +25,14 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		updates: currentUpdates,
 		deletes: currentDeletes,
 		currentlyEditingId,
+		currentlyEditingNew,
 	} = currentMethodEdits;
 	const mergedState = {
 		creates: [ ...creates ],
 		updates: [ ...updates ],
 		deletes: [ ...deletes ],
 		currentlyEditingId,
+		currentlyEditingNew,
 	};
 
 	currentDeletes.forEach( ( { id } ) => {

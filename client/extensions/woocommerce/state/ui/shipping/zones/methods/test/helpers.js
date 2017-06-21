@@ -21,6 +21,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, title: 'Wololo' } ],
 			deletes: [ { id: 2 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
@@ -32,12 +33,14 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, title: 'Wololo' } ],
 			deletes: [ { id: 2 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 		const currentMethodEdits = {
 			creates: [],
 			updates: [],
 			deletes: [],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( zoneMethodEdits );
@@ -55,6 +58,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 3, title: 'Wololo' } ],
 			deletes: [ { id: 4 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
@@ -62,6 +66,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, title: 'Wololo' }, { id: 3, title: 'Wololo' } ],
 			deletes: [ { id: 2 }, { id: 4 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		} );
 	} );
 
@@ -77,6 +82,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, title: 'NewUpdateTitle' } ],
 			deletes: [],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
@@ -84,6 +90,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, key: 'value', title: 'NewUpdateTitle' } ],
 			deletes: [],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		} );
 	} );
 
@@ -99,6 +106,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [],
 			deletes: [ { id: { index: 0 } }, { id: 1 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( {
@@ -106,6 +114,7 @@ describe( 'mergeMethodEdits', () => {
 			updates: [],
 			deletes: [ { id: 1 } ],
 			currentlyEditingId: null,
+			currentlyEditingNew: false,
 		} );
 	} );
 
@@ -121,6 +130,25 @@ describe( 'mergeMethodEdits', () => {
 			updates: [ { id: 1, title: 'Wololo' } ],
 			deletes: [ { id: 2 } ],
 			currentlyEditingId: 7,
+			currentlyEditingNew: false,
+		};
+
+		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
+	} );
+
+	it( 'should preserve the isNew state', () => {
+		const zoneMethodEdits = {
+			creates: [],
+			updates: [],
+			deletes: [],
+			currentlyEditingId: null,
+		};
+		const currentMethodEdits = {
+			creates: [ { id: { index: 0 } } ],
+			updates: [ { id: 1, title: 'Wololo' } ],
+			deletes: [ { id: 2 } ],
+			currentlyEditingId: { index: 1 },
+			currentlyEditingNew: true,
 		};
 
 		expect( mergeMethodEdits( zoneMethodEdits, currentMethodEdits ) ).to.deep.equal( currentMethodEdits );
