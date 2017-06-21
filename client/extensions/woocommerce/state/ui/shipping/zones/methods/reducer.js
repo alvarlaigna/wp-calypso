@@ -165,7 +165,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_CHANGE_TYPE ] = ( state, action ) => {
 		id: state.currentlyEditingId,
 		title: getMethodName( methodType ),
 		changedType: true,
-		methodType
+		methodType,
 	};
 
 	return { ...state, currentlyEditingChanges };

@@ -138,7 +138,6 @@ export const getCurrentlyOpenShippingZoneMethod = ( state, siteId = getSelectedS
 	}
 
 	return {
-		id: zone.methods.currentlyEditingId,
 		...openMethod,
 		...zone.methods.currentlyEditingChanges
 	};
