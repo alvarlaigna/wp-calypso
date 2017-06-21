@@ -24,6 +24,7 @@ const emptyMethodChanges = {
 	deletes: [],
 	currentlyEditingId: null,
 	currentlyEditingNew: false,
+	currentlyEditingChangedType: false,
 };
 
 const emptyChanges = {

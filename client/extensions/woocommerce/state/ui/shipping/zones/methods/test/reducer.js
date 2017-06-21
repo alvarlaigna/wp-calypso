@@ -79,11 +79,12 @@ describe( 'reducer', () => {
 				currentlyEditingId: 7,
 				currentlyEditingChanges: {},
 				currentlyEditingNew: false,
+				currentlyEditingChangedType: false,
 			};
 
 			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate' ) );
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
-			expect( newState.currentlyEditingChanges.changedType ).to.equal( true );
+			expect( newState.currentlyEditingChangedType ).to.equal( true );
 			expect( newState.currentlyEditingNew ).to.equal( false );
 		} );
 
@@ -95,11 +96,12 @@ describe( 'reducer', () => {
 				currentlyEditingId: 7,
 				currentlyEditingChanges: {},
 				currentlyEditingNew: true,
+				currentlyEditingChangedType: false,
 			};
 
 			const newState = reducer( state, changeShippingZoneMethodType( siteId, 'flat_rate' ) );
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
-			expect( newState.currentlyEditingChanges.changedType ).to.equal( true );
+			expect( newState.currentlyEditingChangedType ).to.equal( true );
 			expect( newState.currentlyEditingNew ).to.equal( true );
 		} );
 	} );
@@ -146,6 +148,8 @@ describe( 'reducer', () => {
 
 			const newState = reducer( state, openShippingZoneMethod( siteId, 1 ) );
 			expect( newState.currentlyEditingId ).to.equal( 1 );
+			expect( newState.currentlyEditingNew ).to.equal( false );
+			expect( newState.currentlyEditingChangedType ).to.equal( false );
 			expect( newState.currentlyEditingChanges ).to.deep.equal( {} );
 		} );
 	} );
@@ -216,7 +220,8 @@ describe( 'reducer', () => {
 				updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
 				deletes: [],
 				currentlyEditingId: 7,
-				currentlyEditingChanges: { id: 7, changedType: true, methodType: 'flat_rate' },
+				currentlyEditingChanges: { id: 7, methodType: 'flat_rate' },
+				currentlyEditingChangedType: true,
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );
@@ -238,7 +243,8 @@ describe( 'reducer', () => {
 				updates: [],
 				deletes: [],
 				currentlyEditingId: { index: 0 },
-				currentlyEditingChanges: { id: { index: 0 }, changedType: true, methodType: 'flat_rate' },
+				currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate' },
+				currentlyEditingChangedType: true,
 			};
 
 			const newState = reducer( state, closeShippingZoneMethod( siteId ) );

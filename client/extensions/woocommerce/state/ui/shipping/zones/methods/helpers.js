@@ -26,6 +26,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		deletes: currentDeletes,
 		currentlyEditingId,
 		currentlyEditingNew,
+		currentlyEditingChangedType,
 	} = currentMethodEdits;
 	const mergedState = {
 		creates: [ ...creates ],
@@ -33,6 +34,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		deletes: [ ...deletes ],
 		currentlyEditingId,
 		currentlyEditingNew,
+		currentlyEditingChangedType,
 	};
 
 	currentDeletes.forEach( ( { id } ) => {
