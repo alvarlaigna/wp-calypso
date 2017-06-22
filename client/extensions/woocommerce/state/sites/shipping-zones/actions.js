@@ -11,7 +11,6 @@ import {
 	areShippingZonesLoaded,
 	areShippingZonesLoading,
 } from './selectors';
-import { fetchShippingMethods } from '../shipping-methods/actions';
 import { fetchShippingZoneMethods } from '../shipping-zone-methods/actions';
 import { fetchShippingZoneLocations } from '../shipping-zone-locations/actions';
 
